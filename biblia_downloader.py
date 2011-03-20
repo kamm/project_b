@@ -3,23 +3,22 @@
 # vim: set fileencoding=iso-8859-2
 
 
-import os
+#import os
 import urllib
 import urllib2
-from BeautifulSoup import BeautifulSoup
+import html5lib
 
 oldTes=[u'Rdz', 'Wj', 'Kpł', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1 Krl', '2 Krl', '1 Krn', '2 Krn', 'Ezd', 'Ne', 'Tb', 'Jdt', 'Est', '1 Mch', '2 Mch', 'Hi', 'Ps', 'Prz', 'Koh', 'Pnp', 'Mdr', 'Syr', 'Iz', 'Jr', 'Lm', 'Ba', 'Ez', 'Dn', 'Oz', 'Jl', 'Am', 'Ab', 'Jon', 'Mi', 'Na', 'Ha', 'So', 'Ag', 'Za', 'Ml']
 newTes=[u'Mt', 'Mk', 'Łk', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
+
+p = html5lib.HTMLParser()
 
 url='http://www.biblia.pl/otworz.php'
 values={'ksiega':'Kol',
   'rozdzial':'1'}
 data=urllib.urlencode(values)
-response=urllib2.urlopen(urllib2.Request(url, data))
-thePage=response.read()
+p.parse(urllib2.urlopen(urllib2.Request(url, data)).read)
 
-soup = BeautifulSoup(thePage, fromEncoding="iso-8859-2")
-print soup.prettify()
 
 #os.mkdir("output")
 
