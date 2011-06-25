@@ -5,6 +5,7 @@
 #import os
 import urllib
 import urllib2
+import re
 from lxml import html
 
 oldTes=[u'Rdz', 'Wj', 'Kp³', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1 Krl', '2 Krl', '1 Krn', '2 Krn', 'Ezd', 'Ne', 'Tb', 'Jdt', 'Est', '1 Mch', '2 Mch', 'Hi', 'Ps', 'Prz', 'Koh', 'Pnp', 'Mdr', 'Syr', 'Iz', 'Jr', 'Lm', 'Ba', 'Ez', 'Dn', 'Oz', 'Jl', 'Am', 'Ab', 'Jon', 'Mi', 'Na', 'Ha', 'So', 'Ag', 'Za', 'Ml']
@@ -16,6 +17,18 @@ values={'ksiega':'Kol',
 data=urllib.urlencode(values)
 response = urllib2.urlopen(urllib2.Request(url, data)).read()
 doc = html.fromstring(response)
+for pdata in doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]'):
+    przypisy = html.tostring(pdata).split(r'<a name="P')
+    for ppp in range(len(przypisy)-1) :
+        przypis = przypisy[ppp+1].partition('"><b>')
+        wers = re.sub(r'^[^#]*#', '', przypis[0])
+        if wers[0] != 'W' :
+            continue
+        print wers
+        print przypis[2].partition(' -  ')[2]
+        print
+'''
 for data in doc.xpath('//div[@class="tresc"]'):
     tresc=''.join(data.xpath('.//span[@class="werset"]/text()'))
 print tresc
+'''
