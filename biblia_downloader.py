@@ -15,8 +15,7 @@ values={'ksiega':'Kol',
   'rozdzial':'1'}
 data=urllib.urlencode(values)
 response = urllib2.urlopen(urllib2.Request(url, data)).read()
-doc = html.document_fromstring(response)
-print html.tostring(doc)
-
-#os.mkdir("output")
-
+doc = html.fromstring(response)
+for data in doc.xpath('//div[@class="tresc"]'):
+    tresc=''.join(data.xpath('.//span[@class="werset"]/text()'))
+print tresc
