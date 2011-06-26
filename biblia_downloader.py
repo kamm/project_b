@@ -31,6 +31,7 @@ for k, v in footnotes.iteritems():
      print k, v
 '''
 bookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0].text)
+ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
 '''
 for data in doc.xpath('//div[@class="tresc"]'):
     tresc=''.join(data.xpath('.//span[@class="werset"]/text()'))
