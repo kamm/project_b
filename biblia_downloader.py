@@ -17,16 +17,18 @@ values={'ksiega':'Kol',
 data=urllib.urlencode(values)
 response = urllib2.urlopen(urllib2.Request(url, data)).read()
 doc = html.fromstring(response)
+footnotes = {}
 for pdata in doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]'):
-    przypisy = html.tostring(pdata).split(r'<a name="P')
-    for ppp in range(len(przypisy)-1) :
-        przypis = przypisy[ppp+1].partition('"><b>')
-        wers = re.sub(r'^[^#]*#', '', przypis[0])
-        if wers[0] != 'W' :
+    temp = html.tostring(pdata).split(r'<a name="P')
+    for ppp in range(len(temp)-1) :
+        footnote = temp[ppp+1].partition('"><b>')
+        verse = re.sub(r'^[^#]*#', '', footnote[0])
+        if verse[0] != 'W' :
             continue
-        print wers
-        print przypis[2].partition(' -  ')[2]
-        print
+        footnotes[verse] = footnote[2].partition(' -  ')[2]
+
+for k, v in footnotes.iteritems():
+     print k, v
 '''
 for data in doc.xpath('//div[@class="tresc"]'):
     tresc=''.join(data.xpath('.//span[@class="werset"]/text()'))
