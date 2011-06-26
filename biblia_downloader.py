@@ -26,8 +26,11 @@ for pdata in doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]'):
             continue
         footnotes[verse] = footnote[2].partition(' -  ')[2]
 
+'''
 for k, v in footnotes.iteritems():
      print k, v
+'''
+bookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0].text)
 '''
 for data in doc.xpath('//div[@class="tresc"]'):
     tresc=''.join(data.xpath('.//span[@class="werset"]/text()'))
