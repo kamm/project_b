@@ -19,9 +19,8 @@ response = urllib2.urlopen(urllib2.Request(url, data)).read()
 doc = html.fromstring(response)
 footnotes = {}
 for pdata in doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]'):
-    temp = html.tostring(pdata).split(r'<a name="P')
-    for ppp in range(len(temp)-1) :
-        footnote = temp[ppp+1].partition('"><b>')
+    for ppp in html.tostring(pdata).split(r'<a name="P') :
+        footnote = ppp.partition('"><b>')
         verse = re.sub(r'^[^#]*#', '', footnote[0])
         if verse[0] != 'W' :
             continue
