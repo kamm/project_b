@@ -12,34 +12,50 @@ from lxml import etree
 oldTes=[u'Rdz', 'Wj', 'Kp³', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1 Krl', '2 Krl', '1 Krn', '2 Krn', 'Ezd', 'Ne', 'Tb', 'Jdt', 'Est', '1 Mch', '2 Mch', 'Hi', 'Ps', 'Prz', 'Koh', 'Pnp', 'Mdr', 'Syr', 'Iz', 'Jr', 'Lm', 'Ba', 'Ez', 'Dn', 'Oz', 'Jl', 'Am', 'Ab', 'Jon', 'Mi', 'Na', 'Ha', 'So', 'Ag', 'Za', 'Ml']
 newTes=[u'Mt', 'Mk', '£k', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
 
-def GetChapter(book, chapter):
-    url='http://www.biblia.deon.pl/otworz.php'
-    values={'ksiega': book,
-      'rozdzial': chapter}
-    data=urllib.urlencode(values)
-    response = urllib2.urlopen(urllib2.Request(url, data)).read()
-    doc = html.fromstring(response)
+class Book:
+    def __init__(self):
+        self.footnotes={}
+        self.content=""
 
-    #bookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0].text)
-    #ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
+    def GetBook(self, book):
+        counter = 1
+        while True:
+            url='http://www.biblia.deon.pl/otworz.php'
+            values={'ksiega': book,
+              'rozdzial': str(counter)}
+            data=urllib.urlencode(values)
+            response = urllib2.urlopen(urllib2.Request(url, data)).read()
+            doc = html.fromstring(response)
 
-    GetFootnotes(doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0])
-    GetContent(doc.xpath('//div[@class="tresc"]')[0])
+            if counter == 1:
+                BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
+                self.content += html.tostring(BookTitle)
+                ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
 
-def GetFootnotes(doc):
-    footnotes = {}
-    for ppp in html.tostring(doc).split(r'<a name="P') :
-        footnote = ppp.partition('"><b>')
-        verse = re.sub(r'^[^#]*#', '', footnote[0])
-        if verse[0] != 'W' :
-            continue
-        footnotes[verse] = footnote[2].partition(' -  ')[2]
+            Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0])
+            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], counter)
 
-    for k, v in footnotes.iteritems():
-        print k, v
+            if counter == ChaptersInBook:
+                # add footnotes here
+                break
+            counter += 1
 
-def GetContent(doc):
-    print html.tostring(doc)
+
+    def GetFootnotes(self, doc, ChapterNo):
+        chapterFootnotes = {}
+        for ppp in html.tostring(doc).split(r'<a name="P') :
+            footnote = ppp.partition('"><b>')
+            verse = str(ChapterNo) + re.sub(r'^[^#]*#', '', footnote[0])
+            if verse[0] != 'W' :
+                continue
+            chapterFootnotes[verse] = footnote[2].partition(' -  ')[2]
+            self.footnotes = dict(self.footnotes.items() + chapterFootnotes.items())
+
+    def GetContent(self, doc):
+        self.content += html.tostring(doc)
+
+    def PrintBookContent(self):
+        print self.content
 
 #parser = etree.XMLParser()
 #parser.feed("<root/>")
@@ -47,4 +63,6 @@ def GetContent(doc):
 #root = parser.close()
 #print etree.tostring(root)
 
-GetChapter('Kol', '1')
+test = Book()
+test.GetBook('Kol')
+test.PrintBookContent()
