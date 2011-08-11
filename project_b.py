@@ -35,7 +35,7 @@ class Book:
                 self.content += html.tostring(BookTitle)
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
 
-            Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0])
+            Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], counter)
             Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], counter)
 
             if counter == ChaptersInBook:
@@ -54,8 +54,21 @@ class Book:
             chapterFootnotes[verse] = footnote[2].partition(' -  ')[2]
             self.footnotes = dict(self.footnotes.items() + chapterFootnotes.items())
 
-    def GetContent(self, doc):
-        self.content += html.tostring(doc)
+    def GetContent(self, doc, counter):
+        draft = html.tostring(doc)
+
+        subs = (
+        # remove gif spacer
+            (r'<img src="gfx/null.gif".*?>', r''),
+        # fix anchor name
+            (r'<a name="', r'<a name="' + str(counter)),
+        # fix footnote link
+            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + str(counter) + r'P')
+        )
+
+        for fromPattern, toPattern in subs:
+            draft = re.sub(fromPattern, toPattern, draft)
+        self.content += draft
 
     def PrintBookContent(self):
         print self.content
