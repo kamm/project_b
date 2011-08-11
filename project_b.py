@@ -13,9 +13,6 @@ oldTes=[u'Rdz', 'Wj', 'Kp³', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1
 newTes=[u'Mt', 'Mk', '£k', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
 
 def GetChapter(book, chapter):
-    #parser = etree.XMLParser()
-
-    #parser.feed("<root/>")
     url='http://www.biblia.deon.pl/otworz.php'
     values={'ksiega': book,
       'rozdzial': chapter}
@@ -26,28 +23,26 @@ def GetChapter(book, chapter):
     #bookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0].text)
     #ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
 
-    GetFootnotes(doc)
+    GetFootnotes(doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0])
+    GetContent(doc.xpath('//div[@class="tresc"]')[0])
 
 def GetFootnotes(doc):
     footnotes = {}
-    for pdata in doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]'):
-        for ppp in html.tostring(pdata).split(r'<a name="P') :
-            footnote = ppp.partition('"><b>')
-            verse = re.sub(r'^[^#]*#', '', footnote[0])
-            if verse[0] != 'W' :
-                continue
-            footnotes[verse] = footnote[2].partition(' -  ')[2]
+    for ppp in html.tostring(doc).split(r'<a name="P') :
+        footnote = ppp.partition('"><b>')
+        verse = re.sub(r'^[^#]*#', '', footnote[0])
+        if verse[0] != 'W' :
+            continue
+        footnotes[verse] = footnote[2].partition(' -  ')[2]
 
-'''
     for k, v in footnotes.iteritems():
         print k, v
-'''
 
-'''
-for data in doc.xpath('//div[@class="tresc"]'):
-    tresc=''.join(data.xpath('.//span[@class="werset"]/text()'))
-print tresc
-'''
+def GetContent(doc):
+    print html.tostring(doc)
+
+#parser = etree.XMLParser()
+#parser.feed("<root/>")
 
 #root = parser.close()
 #print etree.tostring(root)
