@@ -2,6 +2,9 @@
 # coding=iso-8859-2
 # vim: set fileencoding=iso-8859-2
 
+__license__ = 'GPL 3'
+__copyright__ = '2011, Tomasz Dlugosz <tomek3d@gmail.com>'
+
 #import os
 import urllib
 import urllib2
