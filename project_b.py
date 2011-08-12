@@ -39,7 +39,7 @@ class Book:
             Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], counter, book)
 
             if counter == ChaptersInBook:
-                self.content += self.footnotes
+                self.content += '<br><br>' + self.footnotes
                 break
             counter += 1
 
@@ -53,7 +53,7 @@ class Book:
                 continue
             chapterFootnotes += '<a id="' + str(ChapterNo) + re.sub('W', 'P', verse) + '" href="#' + str(ChapterNo) + verse + '" class="przypis"> [' + book + str(ChapterNo) + re.sub('W', ',', verse) +']</a> ' + footnote[2].partition(' -  ')[2] + ' \n'
 
-        self.footnotes += '<br><br>' + chapterFootnotes
+        self.footnotes += chapterFootnotes
 
     def GetContent(self, doc, counter):
         draft = html.tostring(doc)
