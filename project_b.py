@@ -86,4 +86,6 @@ class Book:
 
 test = Book()
 test.GetBook('Ag')
+print "<html>"
 test.PrintBookContent()
+print "</html>"
