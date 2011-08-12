@@ -53,7 +53,7 @@ class Book:
                 continue
             chapterFootnotes += '<a id="' + str(ChapterNo) + re.sub('W', 'P', verse) + '" href="#' + str(ChapterNo) + verse + '" class="przypis"> [' + book + str(ChapterNo) + re.sub('W', ',', verse) +']</a> ' + footnote[2].partition(' -  ')[2] + ' \n'
 
-        self.footnotes += chapterFootnotes
+        self.footnotes += '<br><br>' + chapterFootnotes
 
     def GetContent(self, doc, counter):
         draft = html.tostring(doc)
