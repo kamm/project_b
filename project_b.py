@@ -15,6 +15,7 @@ oldTes=[u'Rdz', 'Wj', 'Kp³', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1
 newTes=[u'Mt', 'Mk', '£k', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
 css = '''
 <style type="text/css">
+    .tytul {font-size:44px; font-weight:bold; color:#0099cf; text-align:center;}
     .numer {text-align:center; font-size:48px; color:#0099cf; font-weight:bold;}
     .miedzytytul1 {font-weight:bold; color:#0099cf; text-align:center; font-size:14px;}
     .przypis {color:#0000ff; font-weight:bold; font-size:11px;}
@@ -42,7 +43,7 @@ class Book:
 
             if counter == 1:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
-                self.content += html.tostring(BookTitle)
+                self.content += re.sub(r'</span>', r'</div>', re.sub(r'span style=\"font-size:22px;\"',r'div class="tytul"', html.tostring(BookTitle)))
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
             else:
                 self.content += '<br><br>'
