@@ -48,10 +48,11 @@ class Book:
         chapterFootnotes = ""
         for ppp in html.tostring(doc).split(r'<a name="P') :
             footnote = ppp.partition('"><b>')
+            footnoteNo = footnote[0].partition('"')[0]
             verse = re.sub(r'^[^#]*#', '', footnote[0])
             if verse[0] != 'W' :
                 continue
-            chapterFootnotes += '<a id="' + str(ChapterNo) + re.sub('W', 'P', verse) + '" href="#' + str(ChapterNo) + verse + '" class="przypis"> [' + book + str(ChapterNo) + re.sub('W', ',', verse) +']</a> ' + footnote[2].partition(' -  ')[2] + ' \n'
+            chapterFootnotes += '<a id="' + str(ChapterNo) + 'P' + footnoteNo + '" href="#' + str(ChapterNo) + verse + '" class="przypis"> [' + book + str(ChapterNo) + re.sub('W', ',', verse) +']</a> ' + footnote[2].partition(' -  ')[2] + ' \n'
 
         self.footnotes += chapterFootnotes
 
@@ -68,8 +69,6 @@ class Book:
         # fix footnote link
             (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + str(counter) + r'P')
         )
-
-        # TODO fix footnotes names
 
         for fromPattern, toPattern in subs:
             draft = re.sub(fromPattern, toPattern, draft)
