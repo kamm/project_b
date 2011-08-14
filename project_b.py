@@ -21,6 +21,7 @@ css = '''
 </style>
 '''
 doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >'
+title = '<title>Pismo ¦wiête</title>'
 
 class Book:
     def __init__(self):
@@ -93,6 +94,7 @@ test.GetBook('Ag')
 print doctype
 print "<html>"
 print "<head>"
+print title
 print css
 print "</head>"
 test.PrintBookContent()
