@@ -15,6 +15,7 @@ oldTes=[u'Rdz', 'Wj', 'Kp³', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1
 newTes=[u'Mt', 'Mk', '£k', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
 css = '''
 <style type="text/css">
+    .numer {text-align:center; font-size:48px; color:#0099cf; font-weight:bold;}
     .miedzytytul1 {font-weight:bold; color:#0099cf; text-align:center; font-size:14px;}
     .przypis {color:#0000ff; font-weight:bold; font-size:11px;}
     .werset {font-weight:bold; font-size:15px; color:#000000;}
@@ -43,8 +44,11 @@ class Book:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
                 self.content += html.tostring(BookTitle)
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
+            else:
+                self.content += '<br><br>'
 
             prefix = book + ' ' + str(counter)
+            self.content += '<div class="numer">' + str(counter) + '</div>'
             Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], prefix)
             Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], prefix)
 
@@ -75,8 +79,8 @@ class Book:
         subs = (
         # remove gif spacer
             (r'<img src="gfx/null.gif".*?>', r''),
-        # remove 'relative' divs
-            (r'position:relative; ', r''),
+        # remove huge chapter numbers
+            (r'<div align=\"left\" style=\"font-size:48px; color:#0099cf; top:40px; position:relative; font-weight:bold; margin:0px;\">[0-9]*</div>', r''),
         # fix anchor name
             (r'<a name="W', r'<a name="' + prefix + ','),
         # fix footnote link
