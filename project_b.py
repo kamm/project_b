@@ -20,7 +20,7 @@ css = '''
     .werset {font-weight:bold; font-size:15px; color:#000000;}
 </style>
 '''
-doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" />'
+doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >'
 
 class Book:
     def __init__(self):
