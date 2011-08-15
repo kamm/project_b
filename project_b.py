@@ -70,8 +70,22 @@ class Book:
             verse = re.sub(r'^[^#]*#', '', footnote[0])
             if verse[0] != 'W' :
                 continue
-            footnoteText = re.sub(r'otworz\.php\?skrot=', r'#', footnote[2].partition(' -  ')[2])
-            footnoteText = re.sub(r'skrot', r'przypis', footnoteText)
+            footnoteText = re.sub(r'otworz\.php\?skrot=', r'#', footnote[2].partition(' - ')[2]).strip()
+
+            subs = (
+            # remove trailing whitespaces
+                (r'\s+<br>', r'<br>'),
+            # change class name
+                (r'skrot', r'przypis'),
+            # fix broken tag in source
+                (r' <i dan>', r''),
+            # one newline is enough
+                (r'<br><br>', r'<br>')
+            )
+
+            for fromPattern, toPattern in subs:
+                footnoteText = re.sub(fromPattern, toPattern, footnoteText)
+
             verse = re.sub('W', ',', verse)
             chapterFootnotes += '<a id="' + prefix + 'P' + footnoteNo + '" href="#' + prefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText + ' \n'
 
@@ -90,8 +104,7 @@ class Book:
         # fix footnote link
             (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + prefix + r'P'),
         # remove trailing whitespaces
-            (r'\s+<br>', r'<br>'),
-            (r'\s+</div><br>', r'</div><br>'),
+            (r'\s+<br>', r'<br>')
         )
 
         for fromPattern, toPattern in subs:
