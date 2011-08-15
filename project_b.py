@@ -15,9 +15,14 @@ oldTes=[u'Rdz', 'Wj', 'Kp³', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1
 newTes=[u'Mt', 'Mk', '£k', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
 css = '''
 <style type="text/css">
-    .tytul {font-size:44px; font-weight:bold; color:#0099cf; text-align:center;}
-    .numer {text-align:center; font-size:48px; color:#0099cf; font-weight:bold;}
+    .tresc {font-size:14px; margin-left:10px; line-height:20px;}
+    .tytul {font-size:22px; font-weight:bold; color:#0099cf; text-align:center;}
+    .tytul1 {font-size:16px; font-weight:bold; color:#0099cf; text-align:center;}
+    .tytul2 {font-size:18px; text-align:center;}
+    .numer {text-align:center; font-size:30px; color:#0099cf; font-weight:bold;}
     .miedzytytul1 {font-weight:bold; color:#0099cf; text-align:center; font-size:14px;}
+    .miedzytytul2 {font-style:italic; text-align:center;}
+    .miedzytytul3 {font-style:italic; font-size:12px; margin-left:-10px}
     .przypis {color:#0000ff; font-weight:bold; font-size:11px;}
     .werset {font-weight:bold; font-size:15px; color:#000000;}
 </style>
@@ -27,11 +32,9 @@ meta = '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2" 
 title = '<title>Pismo ¦wiête</title>'
 
 class Book:
-    def __init__(self):
+    def GetBook(self, book):
         self.footnotes=""
         self.content=""
-
-    def GetBook(self, book):
         counter = 1
         while True:
             url='http://www.biblia.deon.pl/otworz.php'
@@ -85,7 +88,10 @@ class Book:
         # fix anchor name
             (r'<a name="W', r'<a name="' + prefix + ','),
         # fix footnote link
-            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + prefix + r'P')
+            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + prefix + r'P'),
+        # remove trailing whitespaces
+            (r'\s+<br>', r'<br>'),
+            (r'\s+</div><br>', r'</div><br>'),
         )
 
         for fromPattern, toPattern in subs:
@@ -96,7 +102,6 @@ class Book:
         print self.content
 
 test = Book()
-test.GetBook('Ag')
 print doctype
 print "<html>"
 print "<head>"
@@ -104,5 +109,8 @@ print meta
 print title
 print css
 print "</head>"
-test.PrintBookContent()
+for book in oldTes:
+    test.GetBook(book)
+    test.PrintBookContent()
+    #print book
 print "</html>"
