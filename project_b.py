@@ -114,6 +114,17 @@ class Book:
     def PrintBookContent(self):
         print self.content
 
+def ToC(testament):
+    if testament == 'old':
+        i = '0'
+    else:
+        i = '1'
+    url='http://biblia.deon.pl/index.php'
+    response = urllib2.urlopen(url).read()
+    doc = html.fromstring(response)
+    for bookList in doc.xpath('.//tr[@valign="top"][' + i + ']/td/'):
+        print html.tostring(bookList)
+
 test = Book()
 print doctype
 print "<html>"
@@ -122,6 +133,7 @@ print meta
 print title
 print css
 print "</head>"
+#ToC('old')
 for book in oldTes:
     test.GetBook(book)
     test.PrintBookContent()
