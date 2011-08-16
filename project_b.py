@@ -46,7 +46,7 @@ class Book:
 
             if counter == 1:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
-                self.content += re.sub(r'</span>', r'</div>', re.sub(r'span style=\"font-size:22px;\"',r'div class="tytul"', html.tostring(BookTitle)))
+                self.content += re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + book + r'"></a><div class="tytul"', html.tostring(BookTitle))) 
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
             else:
                 self.content += '<br><br>'
@@ -116,14 +116,21 @@ class Book:
 
 def ToC(testament):
     if testament == 'old':
-        i = '0'
-    else:
         i = '1'
+        print '<div class="tytul">STARY TESTAMENT</div><br><br>'
+        books = oldTes
+    else:
+        i = '2'
+        print '<div class="tytul">NOWY TESTAMENT</div><br><br>'
+        books = newTes
     url='http://biblia.deon.pl/index.php'
     response = urllib2.urlopen(url).read()
     doc = html.fromstring(response)
-    for bookList in doc.xpath('.//tr[@valign="top"][' + i + ']/td/'):
-        print html.tostring(bookList)
+    index = 0
+    for bookList in doc.xpath('.//tr[@valign="top"][' + i + ']/td/a'):
+        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + books[index] + r'"', html.tostring(bookList)) + '<br>'
+        index+=1
+    print '<br><br>'
 
 test = Book()
 print doctype
@@ -133,7 +140,7 @@ print meta
 print title
 print css
 print "</head>"
-#ToC('old')
+ToC('old')
 for book in oldTes:
     test.GetBook(book)
     test.PrintBookContent()
