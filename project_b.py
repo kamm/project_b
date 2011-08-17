@@ -77,8 +77,6 @@ class Book:
                 (r'\s+<br>', r'<br>'),
             # change class name
                 (r'skrot', r'przypis'),
-            # fix broken tag in source
-                (r' <i dan>', r''),
             # one newline is enough
                 (r'<br><br>', r'<br>')
             )
