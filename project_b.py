@@ -126,10 +126,8 @@ def ToC(testament):
     url='http://biblia.deon.pl/index.php'
     response = urllib2.urlopen(url).read()
     doc = html.fromstring(response)
-    index = 0
-    for bookList in doc.xpath('.//tr[@valign="top"][' + i + ']/td/a'):
-        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + books[index] + r'"', html.tostring(bookList)) + '<br>'
-        index+=1
+    for entry, href in zip(doc.xpath('.//tr[@valign="top"][' + i + ']/td/a'), books):
+        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + href + r'"', html.tostring(entry)) + '<br>'
     print '<br><br>'
 
 test = Book()
