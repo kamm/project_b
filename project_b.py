@@ -33,8 +33,8 @@ title = '<title>Pismo ¦wiête</title>'
 
 class Book:
     def GetBook(self, book):
-        self.footnotes=""
-        self.content=""
+        self.footnotes=[]
+        self.content=[]
         counter = 1
         while True:
             url='http://www.biblia.deon.pl/otworz.php'
@@ -46,24 +46,24 @@ class Book:
 
             if counter == 1:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
-                self.content += re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + book + r'"></a><div class="tytul"', html.tostring(BookTitle))) 
+                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + book + r'"></a><div class="tytul"', html.tostring(BookTitle))))
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
             else:
-                self.content += '<br><br>'
+                self.content.append('<br><br>')
 
             prefix = book + ' ' + str(counter)
-            self.content += '<div class="numer">' + str(counter) + '</div>'
+            self.content.append('<div class="numer">' + str(counter) + '</div>')
             Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], prefix)
             Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], prefix)
 
             if counter == ChaptersInBook:
-                self.content += '<br><br>' + self.footnotes
+                self.content.append('<br><br>' + "".join(self.footnotes))
                 break
             counter += 1
 
 
     def GetFootnotes(self, doc, prefix):
-        chapterFootnotes = ""
+        chapterFootnotes = []
         for ppp in html.tostring(doc).split(r'<a name="P') :
             footnote = ppp.partition('"><b>')
             footnoteNo = footnote[0].partition('"')[0]
@@ -85,9 +85,9 @@ class Book:
                 footnoteText = re.sub(fromPattern, toPattern, footnoteText)
 
             verse = re.sub('W', ',', verse)
-            chapterFootnotes += '<a id="' + prefix + 'P' + footnoteNo + '" href="#' + prefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText + '\n'
+            chapterFootnotes.append('<a id="' + prefix + 'P' + footnoteNo + '" href="#' + prefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
 
-        self.footnotes += chapterFootnotes
+        self.footnotes.append("\n".join(chapterFootnotes))
 
     def GetContent(self, doc, prefix):
         draft = html.tostring(doc)
@@ -107,10 +107,10 @@ class Book:
 
         for fromPattern, toPattern in subs:
             draft = re.sub(fromPattern, toPattern, draft)
-        self.content += draft
+        self.content.append(draft)
 
     def PrintBookContent(self):
-        print self.content
+        print "".join(self.content)
 
 def ToC(testament):
     if testament == 'old':
