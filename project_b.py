@@ -85,7 +85,7 @@ class Book:
                 footnoteText = re.sub(fromPattern, toPattern, footnoteText)
 
             verse = re.sub('W', ',', verse)
-            chapterFootnotes += '<a id="' + prefix + 'P' + footnoteNo + '" href="#' + prefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText + ' \n'
+            chapterFootnotes += '<a id="' + prefix + 'P' + footnoteNo + '" href="#' + prefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText + '\n'
 
         self.footnotes += chapterFootnotes
 
