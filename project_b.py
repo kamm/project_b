@@ -6,6 +6,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, Tomasz Dlugosz <tomek3d@gmail.com>'
 
 #import os
+import sys
 import urllib
 import urllib2
 import re
@@ -128,17 +129,35 @@ def ToC(testament):
         print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + href + r'"', html.tostring(entry)) + '<br>'
     print '<br><br>'
 
-test = Book()
-print doctype
-print "<html>"
-print "<head>"
-print meta
-print title
-print css
-print "</head>"
-ToC('old')
-for book in oldTes:
-    test.GetBook(book)
-    test.PrintBookContent()
-    #print book
-print "</html>"
+def main(task):
+    print doctype
+    print "<html>"
+    print "<head>"
+    print meta
+    print title
+    print css
+    print "</head>"
+    target = []
+    if task in ['wszystko', 'stary']:
+        ToC('old')
+        target.extend(oldTes)
+    if task in ['wszystko', 'nowy']:
+        ToC('new')
+        target.extend(newTes)
+    singleBook = Book()
+    for book in target:
+        singleBook.GetBook(book)
+        singleBook.PrintBookContent()
+    print "</html>"
+
+
+if not sys.argv[1]:
+    print "Podaj 1 argument"
+    sys.exit(1)
+#if sys.argv[1] in oldTes or sys.argv[1] in newTes or sys.argv[1] in ['stary', 'nowy', 'wszystko']:
+if sys.argv[1] in ['stary', 'nowy', 'wszystko']:
+    main(sys.argv[1])
+else:
+    print "Nieprawidlowa opcja"
+    sys.exit(1)
+
