@@ -137,6 +137,8 @@ def main(task):
         print '<div class="tytul">NOWY TESTAMENT</div><br><br>'
         ToC('2', newTes)
         target.extend(newTes)
+    if task in oldTes or task in newTes:
+        target.append(task)
     singleBook = Book()
     for book in target:
         singleBook.GetBook(book)
@@ -146,8 +148,7 @@ def main(task):
 if len(sys.argv) != 2:
     print "Podaj 1 argument"
     sys.exit(1)
-#if sys.argv[1] in oldTes or sys.argv[1] in newTes or sys.argv[1] in ['stary', 'nowy', 'wszystko']:
-if sys.argv[1] in ['stary', 'nowy', 'wszystko']:
+if sys.argv[1] in oldTes or sys.argv[1] in newTes or sys.argv[1] in ['stary', 'nowy', 'wszystko']:
     main(sys.argv[1])
 else:
     print "Nieprawidłowa opcja"
