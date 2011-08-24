@@ -11,8 +11,8 @@ import urllib2
 import re
 from lxml import html
 
-oldTes=[u'Rdz', 'Wj', 'Kpł', 'Lb', 'Pwt', 'Joz', 'Sdz', 'Rt', '1 Sm', '2 Sm', '1 Krl', '2 Krl', '1 Krn', '2 Krn', 'Ezd', 'Ne', 'Tb', 'Jdt', 'Est', '1 Mch', '2 Mch', 'Hi', 'Ps', 'Prz', 'Koh', 'Pnp', 'Mdr', 'Syr', 'Iz', 'Jr', 'Lm', 'Ba', 'Ez', 'Dn', 'Oz', 'Jl', 'Am', 'Ab', 'Jon', 'Mi', 'Na', 'Ha', 'So', 'Ag', 'Za', 'Ml']
-newTes=[u'Mt', 'Mk', 'Łk', 'J', 'Dz', 'Rz', '1 Kor', '2 Kor', 'Ga', 'Ef', 'Flp', 'Kol', '1 Tes', '2 Tes', '1 Tm', '2 Tm', 'Tt', 'Flm', 'Hbr', 'Jk', '1 P', '2 P', '1 J', '2 J', '3 J', 'Jud', 'Ap']
+oldTes=[u'Rdz', u'Wj', u'Kpł', u'Lb', u'Pwt', u'Joz', u'Sdz', u'Rt', u'1 Sm', u'2 Sm', u'1 Krl', u'2 Krl', u'1 Krn', u'2 Krn', u'Ezd', u'Ne', u'Tb', u'Jdt', u'Est', u'1 Mch', u'2 Mch', u'Hi', u'Ps', u'Prz', u'Koh', u'Pnp', u'Mdr', u'Syr', u'Iz', u'Jr', u'Lm', u'Ba', u'Ez', u'Dn', u'Oz', u'Jl', u'Am', u'Ab', u'Jon', u'Mi', u'Na', u'Ha', u'So', u'Ag', u'Za', u'Ml']
+newTes=[u'Mt', u'Mk', u'Łk', u'J', u'Dz', u'Rz', u'1 Kor', u'2 Kor', u'Ga', u'Ef', u'Flp', u'Kol', u'1 Tes', u'2 Tes', u'1 Tm', u'2 Tm', u'Tt', u'Flm', u'Hbr', u'Jk', u'1 P', u'2 P', u'1 J', u'2 J', u'3 J', u'Jud', u'Ap']
 css = '''
 <style type="text/css">
     .tresc {font-size:14px; margin-left:10px; line-height:20px;}
@@ -29,7 +29,7 @@ css = '''
 '''
 doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >'
 meta = '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2" >'
-title = '<title>Pismo Święte</title>'
+title = u'<title>Pismo Święte</title>'
 
 class Book:
     def GetBook(self, book):
@@ -38,7 +38,7 @@ class Book:
         counter = 1
         while True:
             url='http://www.biblia.deon.pl/otworz.php'
-            values={'ksiega': book.decode('utf-8').encode('iso8859_2'),
+            values={'ksiega': book.encode('iso8859_2'),
               'rozdzial': str(counter)}
             data=urllib.urlencode(values)
             response = urllib2.urlopen(urllib2.Request(url, data)).read()
@@ -46,12 +46,12 @@ class Book:
 
             if counter == 1:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
-                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + book.decode('utf-8').encode('iso8859_2') + r'"></a><div class="tytul"', html.tostring(BookTitle))))
+                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + book.encode('iso8859_2') + r'"></a><div class="tytul"', html.tostring(BookTitle))))
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
             else:
                 self.content.append('<br><br>')
 
-            prefix = book.decode('utf-8').encode('iso8859_2') + ' ' + str(counter)
+            prefix = book.encode('iso8859_2') + ' ' + str(counter)
             self.content.append('<div class="numer">' + str(counter) + '</div>')
             Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], prefix)
             Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], prefix)
@@ -125,7 +125,7 @@ def ToC(testament, books):
     response = urllib2.urlopen(url).read()
     doc = html.fromstring(response)
     for entry, href in zip(doc.xpath('.//tr[@valign="top"][' + testament + ']/td/a'), books):
-        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + href.decode('utf-8').encode('iso8859_2') + r'"', html.tostring(entry)) + '<br>'
+        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + href.encode('iso8859_2') + r'"', html.tostring(entry)) + '<br>'
     print '<br><br>'
 
 def main(task):
@@ -133,7 +133,7 @@ def main(task):
     print "<html>"
     print "<head>"
     print meta
-    print title.decode('utf-8').encode('iso8859_2')
+    print title.encode('iso8859_2')
     print css
     print "</head>"
     target = []
@@ -157,8 +157,9 @@ if len(sys.argv) != 2:
     print "Podaj 1 argument"
     usage()
     sys.exit(1)
-if sys.argv[1] in oldTes or sys.argv[1] in newTes or sys.argv[1] in ['stary', 'nowy', 'wszystko']:
-    main(sys.argv[1])
+task = sys.argv[1].decode('utf-8')
+if task in oldTes or task in newTes or task in ['stary', 'nowy', 'wszystko']:
+    main(task)
 else:
     print "Nieprawidłowy argument"
     usage()
