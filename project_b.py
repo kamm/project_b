@@ -112,19 +112,11 @@ class Book:
     def PrintBookContent(self):
         print "".join(self.content)
 
-def ToC(testament):
-    if testament == 'old':
-        i = '1'
-        print '<div class="tytul">STARY TESTAMENT</div><br><br>'
-        books = oldTes
-    else:
-        i = '2'
-        print '<div class="tytul">NOWY TESTAMENT</div><br><br>'
-        books = newTes
+def ToC(testament, books):
     url='http://biblia.deon.pl/index.php'
     response = urllib2.urlopen(url).read()
     doc = html.fromstring(response)
-    for entry, href in zip(doc.xpath('.//tr[@valign="top"][' + i + ']/td/a'), books):
+    for entry, href in zip(doc.xpath('.//tr[@valign="top"][' + testament + ']/td/a'), books):
         print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + href.decode('utf-8').encode('iso8859_2') + r'"', html.tostring(entry)) + '<br>'
     print '<br><br>'
 
@@ -138,10 +130,12 @@ def main(task):
     print "</head>"
     target = []
     if task in ['wszystko', 'stary']:
-        ToC('old')
+        print '<div class="tytul">STARY TESTAMENT</div><br><br>'
+        ToC('1', oldTes)
         target.extend(oldTes)
     if task in ['wszystko', 'nowy']:
-        ToC('new')
+        print '<div class="tytul">NOWY TESTAMENT</div><br><br>'
+        ToC('2', newTes)
         target.extend(newTes)
     singleBook = Book()
     for book in target:
@@ -149,8 +143,7 @@ def main(task):
         singleBook.PrintBookContent()
     print "</html>"
 
-
-if not sys.argv[1]:
+if len(sys.argv) != 2:
     print "Podaj 1 argument"
     sys.exit(1)
 #if sys.argv[1] in oldTes or sys.argv[1] in newTes or sys.argv[1] in ['stary', 'nowy', 'wszystko']:
