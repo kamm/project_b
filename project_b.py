@@ -112,6 +112,14 @@ class Book:
     def PrintBookContent(self):
         print "".join(self.content)
 
+def usage():
+    print
+    print "Wspierane parametry: stary, nowy, wszystko, <nazwa księgi>"
+    print "stary \t\t- pobiera Stary Testament"
+    print "nowy \t\t- pobiera Nowy Testament"
+    print "wszystko \t- pobiera Stary i Nowy Testament"
+    print "<nazwa księgi> \t- pobiera jedną księgę, np. 'Rdz' lub '1 Kor'"
+
 def ToC(testament, books):
     url='http://biblia.deon.pl/index.php'
     response = urllib2.urlopen(url).read()
@@ -147,10 +155,12 @@ def main(task):
 
 if len(sys.argv) != 2:
     print "Podaj 1 argument"
+    usage()
     sys.exit(1)
 if sys.argv[1] in oldTes or sys.argv[1] in newTes or sys.argv[1] in ['stary', 'nowy', 'wszystko']:
     main(sys.argv[1])
 else:
-    print "Nieprawidłowa opcja"
+    print "Nieprawidłowy argument"
+    usage()
     sys.exit(1)
 
