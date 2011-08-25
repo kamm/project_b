@@ -55,7 +55,7 @@ class Book:
             plainPrefix = plainBook + str(counter)
             self.content.append('<div class="numer">' + str(counter) + '</div>')
             Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], plainPrefix)
-            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], plainPrefix, book.encode('utf-8') + ' ' + str(counter))
+            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], plainPrefix, book.encode('iso8859_2') + ' ' + str(counter))
 
             if counter == ChaptersInBook:
                 self.content.append('<br><br>' + "".join(self.footnotes))
