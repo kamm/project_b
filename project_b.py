@@ -114,11 +114,18 @@ class Book:
 
 def usage():
     print
-    print "Wspierane parametry: stary, nowy, wszystko, <nazwa księgi>"
+    print "Wspierane parametry: stary, nowy, wszystko, lista, <nazwa księgi>"
     print "stary \t\t- pobiera Stary Testament"
     print "nowy \t\t- pobiera Nowy Testament"
     print "wszystko \t- pobiera Stary i Nowy Testament"
+    print "lista \t\t- wyświetla listę skróconych nazw ksiąg Starego i Nowego Testamentu"
     print "<nazwa księgi> \t- pobiera jedną księgę, np. 'Rdz' lub '1 Kor'"
+
+def showList():
+    print "księgi Starego Testamentu:"
+    print "\t".join(oldTes)
+    print "księgi Nowego Testamentu:"
+    print "\t".join(newTes)
 
 def ToC(testament, books):
     url='http://biblia.deon.pl/index.php'
@@ -158,7 +165,9 @@ if len(sys.argv) != 2:
     usage()
     sys.exit(1)
 task = sys.argv[1].decode('utf-8')
-if task in oldTes or task in newTes or task in ['stary', 'nowy', 'wszystko']:
+if task == "lista":
+    showList()
+elif task in oldTes or task in newTes or task in ['stary', 'nowy', 'wszystko']:
     main(task)
 else:
     print "Nieprawidłowy argument"
