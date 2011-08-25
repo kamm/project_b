@@ -36,6 +36,7 @@ class Book:
         self.footnotes=[]
         self.content=[]
         counter = 1
+        plainBook = fixName(book)
         while True:
             url='http://www.biblia.deon.pl/otworz.php'
             values={'ksiega': book.encode('iso8859_2'),
@@ -46,15 +47,15 @@ class Book:
 
             if counter == 1:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
-                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + book.encode('iso8859_2') + r'"></a><div class="tytul"', html.tostring(BookTitle))))
+                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + plainBook + r'"></a><div class="tytul"', html.tostring(BookTitle))))
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
             else:
                 self.content.append('<br><br>')
 
-            prefix = book.encode('iso8859_2') + ' ' + str(counter)
+            plainPrefix = plainBook + str(counter)
             self.content.append('<div class="numer">' + str(counter) + '</div>')
-            Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], prefix)
-            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], prefix)
+            Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], plainPrefix)
+            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], plainPrefix, book.encode('utf-8') + ' ' + str(counter))
 
             if counter == ChaptersInBook:
                 self.content.append('<br><br>' + "".join(self.footnotes))
@@ -62,7 +63,7 @@ class Book:
             counter += 1
 
 
-    def GetFootnotes(self, doc, prefix):
+    def GetFootnotes(self, doc, plainPrefix, prefix):
         chapterFootnotes = []
         for ppp in html.tostring(doc).split(r'<a name="P') :
             footnote = ppp.partition('"><b>')
@@ -85,11 +86,11 @@ class Book:
                 footnoteText = re.sub(fromPattern, toPattern, footnoteText)
 
             verse = re.sub('W', ',', verse)
-            chapterFootnotes.append('<a id="' + prefix + 'P' + footnoteNo + '" href="#' + prefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
+            chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#' + plainPrefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
 
         self.footnotes.append("\n".join(chapterFootnotes))
 
-    def GetContent(self, doc, prefix):
+    def GetContent(self, doc, plainPrefix):
         draft = html.tostring(doc)
 
         subs = (
@@ -98,9 +99,9 @@ class Book:
         # remove huge chapter numbers
             (r'<div align=\"left\" style=\"font-size:48px; color:#0099cf; top:40px; position:relative; font-weight:bold; margin:0px;\">[0-9]*</div>', r''),
         # fix anchor name
-            (r'<a name="W', r'<a name="' + prefix + ','),
+            (r'<a name="W', r'<a name="' + plainPrefix + ','),
         # fix footnote link
-            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + prefix + r'P'),
+            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + plainPrefix + r'P'),
         # remove trailing whitespaces
             (r'\s+<br>', r'<br>')
         )
@@ -111,6 +112,19 @@ class Book:
 
     def PrintBookContent(self):
         print "".join(self.content)
+
+def fixName(text):
+    subs = (
+    # remove whitespaces
+        (' ', ''),
+        ('%20', ''),
+    # replace non-ascii chars
+        ('Ł', 'L'),
+        ('ł','l')
+    )
+    for fromPattern, toPattern in subs:
+        text = re.sub(fromPattern, toPattern, text)
+    return text
 
 def usage():
     print
@@ -123,9 +137,9 @@ def usage():
 
 def showList():
     print "księgi Starego Testamentu:"
-    print "\t".join(oldTes)
+    print "\t".join(oldTes).encode('utf-8')
     print "księgi Nowego Testamentu:"
-    print "\t".join(newTes)
+    print "\t".join(newTes).encode('utf-8')
 
 def ToC(testament, books):
     url='http://biblia.deon.pl/index.php'
