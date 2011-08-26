@@ -90,7 +90,7 @@ class Book:
                 footnoteText = re.sub(fromPattern, toPattern, footnoteText)
 
             verse = re.sub('W', ',', verse)
-            chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#W' + plainPrefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
+            chapterFootnotes.append('<a id="P' + plainPrefix + 'P' + footnoteNo + '" href="#W' + plainPrefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
             #chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#' + plainPrefix + verse + '" class="przypis"> [' + plainPrefix + verse + ']</a> ' + footnoteText)
 
         self.footnotes.append("\n".join(chapterFootnotes))
@@ -106,7 +106,7 @@ class Book:
         # fix anchor name
             (r'<a name="W', r'<a name="W' + plainPrefix + ','),
         # fix footnote link
-            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + plainPrefix + r'P'),
+            (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#P' + plainPrefix + r'P'),
         # remove trailing whitespaces
             (r'\s+<br>', r'<br>')
         )
