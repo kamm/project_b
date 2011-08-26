@@ -47,7 +47,7 @@ class Book:
 
             if counter == 1:
                 BookTitle = (doc.findall('.//span[@style="font-size:22px;"]')[0])
-                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="' + plainBook + r'"></a><div class="tytul"', html.tostring(BookTitle))))
+                self.content.append(re.sub(r'</span>', r'</div>', re.sub(r'<span style=\"font-size:22px;\"',r'<br><br><a name="K' + plainBook + r'"></a><div class="tytul"', html.tostring(BookTitle))))
                 ChaptersInBook = len(doc.findall('.//select[@name="rozdzial"]/option'))
             else:
                 self.content.append('<br><br>')
@@ -71,7 +71,7 @@ class Book:
             verse = re.sub(r'^[^#]*#', '', footnote[0])
             if verse[0] != 'W' :
                 continue
-            footnoteText = re.sub(r'otworz\.php\?skrot=', r'#', footnote[2].partition(' - ')[2]).strip()
+            footnoteText = re.sub(r'otworz\.php\?skrot=', r'#W', footnote[2].partition(' - ')[2]).strip()
 
             subs = (
             # remove trailing whitespaces
@@ -90,7 +90,7 @@ class Book:
                 footnoteText = re.sub(fromPattern, toPattern, footnoteText)
 
             verse = re.sub('W', ',', verse)
-            chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#' + plainPrefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
+            chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#W' + plainPrefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
             #chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#' + plainPrefix + verse + '" class="przypis"> [' + plainPrefix + verse + ']</a> ' + footnoteText)
 
         self.footnotes.append("\n".join(chapterFootnotes))
@@ -104,7 +104,7 @@ class Book:
         # remove huge chapter numbers
             (r'<div align=\"left\" style=\"font-size:48px; color:#0099cf; top:40px; position:relative; font-weight:bold; margin:0px;\">[0-9]*</div>', r''),
         # fix anchor name
-            (r'<a name="W', r'<a name="' + plainPrefix + ','),
+            (r'<a name="W', r'<a name="W' + plainPrefix + ','),
         # fix footnote link
             (r'<a href="/rozdzial.php\?id=.*?#P', r'<a href="#' + plainPrefix + r'P'),
         # remove trailing whitespaces
@@ -160,7 +160,7 @@ def ToC(testament, books):
     response = urllib2.urlopen(url).read()
     doc = html.fromstring(response)
     for entry, href in zip(doc.xpath('.//tr[@valign="top"][' + testament + ']/td/a'), books):
-        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#' + href.encode('iso8859_2') + r'"', html.tostring(entry)) + '<br>'
+        print re.sub(r'class=\"ks\" href=\".*?\"', r'href="#K' + unicodeToPlain(href) + r'"', html.tostring(entry)) + '<br>'
     print '<br><br>'
 
 def main(task):
