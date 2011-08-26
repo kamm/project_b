@@ -36,7 +36,7 @@ class Book:
         self.footnotes=[]
         self.content=[]
         counter = 1
-        plainBook = fixName(book)
+        plainBook = unicodeToPlain(book)
         while True:
             url='http://www.biblia.deon.pl/otworz.php'
             values={'ksiega': book.encode('iso8859_2'),
@@ -55,7 +55,7 @@ class Book:
             plainPrefix = plainBook + str(counter)
             self.content.append('<div class="numer">' + str(counter) + '</div>')
             Book.GetContent(self, doc.xpath('//div[@class="tresc"]')[0], plainPrefix)
-            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], plainPrefix, book.encode('iso8859_2') + ' ' + str(counter))
+            Book.GetFootnotes(self, doc.xpath('//td[@width="150"]/table/tr[5]/td/div[1]')[0], plainPrefix, unicodeToReference(book) + ' ' + str(counter))
 
             if counter == ChaptersInBook:
                 self.content.append('<br><br>' + "".join(self.footnotes))
@@ -78,6 +78,10 @@ class Book:
                 (r'\s+<br>', r'<br>'),
             # change class name
                 (r'skrot', r'przypis'),
+            # fix href
+                ('%20', ''),
+                ('%C5%821', 'l'),
+                ('%C5%822', 'L'),
             # one newline is enough
                 (r'<br><br>', r'<br>')
             )
@@ -87,6 +91,7 @@ class Book:
 
             verse = re.sub('W', ',', verse)
             chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#' + plainPrefix + verse + '" class="przypis"> [' + prefix + verse + ']</a> ' + footnoteText)
+            #chapterFootnotes.append('<a id="' + plainPrefix + 'P' + footnoteNo + '" href="#' + plainPrefix + verse + '" class="przypis"> [' + plainPrefix + verse + ']</a> ' + footnoteText)
 
         self.footnotes.append("\n".join(chapterFootnotes))
 
@@ -113,14 +118,23 @@ class Book:
     def PrintBookContent(self):
         print "".join(self.content)
 
-def fixName(text):
+def unicodeToPlain(text):
     subs = (
     # remove whitespaces
         (' ', ''),
-        ('%20', ''),
     # replace non-ascii chars
-        ('Ł', 'L'),
-        ('ł','l')
+        (u'ł','l'),
+        (u'Ł', 'L')
+    )
+    for fromPattern, toPattern in subs:
+        text = re.sub(fromPattern, toPattern, text)
+    return text
+
+def unicodeToReference(text):
+    subs = (
+    # replace non-ascii chars
+        (u'ł','&#321;'),
+        (u'Ł', '&#322;')
     )
     for fromPattern, toPattern in subs:
         text = re.sub(fromPattern, toPattern, text)
