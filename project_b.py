@@ -83,7 +83,9 @@ class Book:
                 ('%C5%821', 'l'),
                 ('%C5%822', 'L'),
             # one newline is enough
-                (r'<br><br>', r'<br>')
+                (r'<br><br>', r'<br>'),
+            # <div> tags were not open
+                (r'<br></div>', r'<br>')
             )
 
             for fromPattern, toPattern in subs:
